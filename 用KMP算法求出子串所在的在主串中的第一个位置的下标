@@ -1,0 +1,78 @@
+ #include<iostream>
+ #include<stdio.h>//.size()的头文件 
+ using namespace std;
+ 
+ int next1[1000005];
+void getnext(string t ,int tsize)//从0号下标开始存起 
+ {
+     int len = -1 ;
+     int j = 0;
+     next1[0] = -1;
+     while(j<tsize-1)
+     {
+         if(len==-1||t[j] == t[len])
+         {
+             ++j;
+             ++len;
+             next1[j] = len;
+//             cout<<next1[j]<<" "; 
+         }else
+         len = next1[len];
+     
+     }
+ } 
+ 
+ int kmp(string s ,string t ,int ssize,int tsize)//字符串都是从0号下标开始存起 
+ {
+     int i = 0 ; 
+     int j = 0 ;
+     while(i<ssize&&j<tsize)
+     {
+       if(j==-1||s[i]==t[j])
+         {
+             i++;
+             j++;
+         }
+		 else
+         {
+             j = next1[j];
+         }
+     }
+     if(j==tsize)
+     {
+        return i-j+1;
+     }else
+     return -1;
+ }
+ string s ;
+ string t ;
+ int n ;
+ int ssize;
+ int tsize;
+ int ans ;
+ int main()
+ {
+     cin>>s;
+     cin>>n;
+     ssize = s.size();			
+     while(n--)
+     {
+         cin>>t;
+         tsize = t.size();//得到字符串的长度（无符号型） 
+         getnext(t,tsize);
+         ans = kmp(s,t,ssize,tsize);  //用一个ans来记录是否找到匹配
+         if(ans==-1)   //若找不到
+         {
+             printf("Not Found\n");
+         }else   //找到，则输出后面的字符；
+         {
+             for(int i = ans-1 ;i < ssize; i++)
+             {
+                 cout<<s[i];
+             }
+             cout<<endl;
+         }
+         
+     }
+     return 0;
+ }
