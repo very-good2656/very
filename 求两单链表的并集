@@ -1,0 +1,91 @@
+#include<iostream>
+#define ElemType int
+using namespace std;
+
+typedef struct LNode
+{
+	LNode* next;
+	ElemType data;
+}LNode,*LinkList;
+
+void Inital(LinkList& L)//创建单链表
+{
+	L = new LNode;
+	L->next = NULL;
+	LNode* r, *p;
+	r = L;
+	ElemType temp_data;
+	while(1)
+	{
+		p = new LNode;
+		cin >> temp_data;
+		if (temp_data == -1)break;
+		else p->data = temp_data;
+		p->next = NULL;
+		r->next = p;
+		r = p;
+	}
+}
+
+LinkList same_elem(LinkList& L1, LinkList& L2)//求两个链表的交集并返回
+{
+	LinkList L3;
+	LNode* p1, * p2, * p3;
+	L3 = new LNode;
+
+	
+	p1 = L1->next;
+	p2 = L2->next;
+//	LinkList L3;
+	p3 = L3;
+	L3->next = NULL;
+	while (p1 != NULL&&p2!=NULL)//要用&&不能用||
+	{
+		if (p1->data > p2->data)	p2 = p2->next;//要用else if 不能用三个if:不然p1/2为空时data区就不存在了
+												//但是下面的if还要用到p1/2的data域，就会访问到不存在的区域，简称“段错误”！！	 
+		else if (p1->data < p2->data)		p1 = p1->next;
+		else if (p1->data == p2->data)
+		{
+			p3->next = p1;
+			p3 = p3->next;
+			p3->next=NULL;//!!!!!!!!!!:如果不加的话那p3连接的就是p1后面那一串数据了，
+						//L1:1 2 5    L2:2 4 5 8该测试点会过是因为刚好p3接住了L1最后一个节点，所以后边的东西就是没有了
+						//但是如果L3最后接的不是L1,L2的最后一个数字，则会LX连同后面的节点都接到L3上 
+			p1 = p1->next;
+			p2 = p2->next;
+		}
+	}
+	delete L1, L2;
+	return L3;
+}
+
+void output(LinkList& L3)//输出链表3
+{
+
+	//if (L3->next == NULL)cout << "NULL";
+	//else
+	//{
+		LNode* p3;
+		p3 = L3->next;
+	//	cout << "没有交集也跑这里";
+		cout << p3->data;
+		p3 = p3->next;
+		while (p3 != NULL)
+		{
+			cout << " " << p3->data;
+			p3 = p3->next;
+		}
+	//}
+}
+
+int main()
+{
+	LinkList L1, L2, L3;
+	Inital(L1);
+	Inital(L2);
+	L3 = same_elem(L1, L2);
+
+	if (L3->next !=NULL)output(L3);
+		else cout << "NULL";
+	return 0; 
+}
